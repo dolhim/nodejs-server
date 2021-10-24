@@ -1,0 +1,121 @@
+---
+swagger: "2.0"
+info:
+  description: ""
+  version: "0.0.1"
+  title: "Mock API"
+host: "localhost:8080"
+basePath: "/"
+schemes:
+- "https"
+produces:
+- "application/json"
+paths:
+  /movies:
+    get:
+      tags:
+      - "movie"
+      summary: "영화 목록 조회\n"
+      description: "영화 목록을 조회한다.\n"
+      operationId: "getMovieList"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "apikey"
+        in: "query"
+        description: "API 인증 키"
+        required: true
+        type: "string"
+        default: "098F6BCD4621D373CADE4E832627B4F6"
+      - name: "credential"
+        in: "query"
+        description: "사용자 인증 키"
+        required: true
+        type: "string"
+        default: "dGVzdHRlc3R0ZXN0dGVzdHRlc3Q="
+      - name: "genre"
+        in: "query"
+        description: "장르\n- all\n- drama\n- comedy\n- documentary\n- biography\n-\
+          \ musical"
+        required: false
+        type: "string"
+        default: "all"
+      - name: "offset"
+        in: "query"
+        description: "시작 레코드 번호\n"
+        required: true
+        type: "integer"
+        default: 0
+      - name: "limit"
+        in: "query"
+        description: "한번에 가져오는 데이타 숫자\n"
+        required: true
+        type: "integer"
+        default: 5
+      responses:
+        "200":
+          description: "success"
+          schema:
+            $ref: "#/definitions/list"
+        "601":
+          description: "오류"
+          schema:
+            $ref: "#/definitions/errorresult"
+      x-swagger-router-controller: "Movie"
+  /check_health:
+    get:
+      tags:
+      - "check health"
+      summary: "health check point"
+      description: "Container Orchestration Tool에서 microservice의 정상 여부를 파악하기위해 호출"
+      operationId: "checkhealth"
+      parameters: []
+      responses:
+        "200":
+          description: "OK"
+      x-swagger-router-controller: "CheckHealth"
+definitions:
+  errorresult:
+    type: "object"
+    properties:
+      resultcode:
+        type: "string"
+        example: "550"
+        description: "에러 코드, HTTP status code 또는 임의로 확장한 코드를 사용 가능"
+      resultmessage:
+        type: "string"
+        example: "해당 데이타가 없습니다.\\n나중에 다시 해보세요."
+        description: "에러 발생 시에 클라이언트가 화면에 표시할 메시지"
+  list:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        example: "A Life in Waves"
+      runtime:
+        type: "string"
+        example: "74"
+      rating:
+        type: "string"
+        example: "5.7"
+      releasedate:
+        type: "string"
+        example: "2007-01-03"
+      genres:
+        type: "string"
+        example: ""
+      summary:
+        type: "string"
+        example: "An exploration of the life and innovations"
+      image:
+        type: "string"
+        example: "https://yts.mx/assets/images/movies/a_life_in_waves_2017/background.jpg"
+    description: "호출 결과"
+    example:
+      summary: "An exploration of the life and innovations"
+      image: "https://yts.mx/assets/images/movies/a_life_in_waves_2017/background.jpg"
+      genres: ""
+      rating: "5.7"
+      runtime: "74"
+      releasedate: "2007-01-03"
+      title: "A Life in Waves"
