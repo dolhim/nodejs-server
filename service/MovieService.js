@@ -1,5 +1,6 @@
 'use strict';
-
+var lib = require('../lib/sharedLibrary');
+var _gstructure = { data: {}, result: {} };
 
 /**
  * 영화 목록 조회 
@@ -12,15 +13,35 @@
  * genre String 장르 - all - drama - comedy - documentary - biography - musical (optional)
  * returns list
  **/
-exports.getMovieList = function(apikey,credential,offset,limit,genre) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {"empty": false};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
+exports.getMovieList = async function(apikey,credential,offset,limit,genre) {
+  try {
+    await checkAccess();  // 간단 인증
+    await getMovieData(); // 데이터 조회
+    await populateResult(); // 비즈니스 로직
+  } catch (error) {
+    console.log('process error!')
+  } finally {
+
+  }
+
+  return _gstructure.data;
 }
 
+////////////////////////////////////////////////////
+
+async function checkAccess() {
+  return true;
+}
+
+async function getMovieData(cachedData) {
+  if (cachedData) {
+    return cachedData;
+  }
+  _gstructure.data = await lib.fetchArray();
+  return _gstructure.data;
+}
+
+async function populateResult() {
+  _gstructure.result = _gstructure.data;
+  return _gstructure.result;
+}
